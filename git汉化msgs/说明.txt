@@ -1,0 +1,3 @@
+把压缩包中的msgs文件夹copy到 Git安装目录/mingw64/share/git-gui/lib
+
+--KIENG博客  https://blog.kieng.cn
