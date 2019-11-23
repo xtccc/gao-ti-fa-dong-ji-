@@ -7,9 +7,7 @@
 """
 # 添加中断后继续的代码部分
 # 二维非稳态导热问题的有限体积数值解法#
-#from mpl_toolkits.mplot3d import Axes3D
 from scipy import linalg
-import matplotlib.pyplot as plt
 import numpy as np
 # 定义求解函数，形参为网格数目
 import os
