@@ -7,10 +7,11 @@
 """
 # 添加中断后继续的代码部分
 # 二维非稳态导热问题的有限体积数值解法#
-from scipy import linalg
 import numpy as np
 # 定义求解函数，形参为网格数目
 import os
+import datetime
+starttime = datetime.datetime.now()
 
 
 def 打开tecplot(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2):
@@ -205,7 +206,7 @@ def solve(N_x_grid, N_y_grid, t, eff_1, eff_2, h):
                 if i != N_x_grid - 1:
                     CC[i * N_y_grid + j] = CC[i * N_y_grid + j] + \
                         a_e[i][j] * T[i + 1][j]
-        result = linalg.solve(AA, CC)  # 求解温度场
+        result = np.linalg.solve(AA, CC)  # 求解温度场
         T_对流求和 = 0
         T_对流求和_i = 0
         for i in range(0, N_x_grid):
@@ -225,4 +226,12 @@ def solve(N_x_grid, N_y_grid, t, eff_1, eff_2, h):
 
 # return (X, Y, T)'''
 # 调用函数的主程序
-solve(20, 20, 30, 0.8, 0.3, 0.3)
+solve(20, 20, 5, 0.8, 0.3, 0.3)
+
+endtime = datetime.datetime.now()
+
+print((endtime - starttime).seconds)
+'''
+t=5  35s
+
+'''
