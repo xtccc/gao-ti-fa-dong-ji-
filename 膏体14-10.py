@@ -11,6 +11,7 @@ import numpy as np
 # 定义求解函数，形参为网格数目
 import os
 import datetime
+print('start--py')
 starttime = datetime.datetime.now()
 
 
@@ -207,20 +208,11 @@ def solve(N_x_grid, N_y_grid, t, eff_1, eff_2, h):
                     CC[i * N_y_grid + j] = CC[i * N_y_grid + j] + \
                         a_e[i][j] * T[i + 1][j]
         result = np.linalg.solve(AA, CC)  # 求解温度场
-        T_对流求和 = 0
-        T_对流求和_i = 0
-        for i in range(0, N_x_grid):
-            for j in range(0, N_y_grid):
-                T[i][j] = result[i * N_y_grid + j]
-                if j == N_y_grid - 1:  # 上边界为混合边界
-                    if i <= N_x_grid * 0.6 - 1:  # 上边界左侧为对流换热
-                        T_对流求和 += T[i][j]
-                        T_对流求和_i += 1
-                        #print (T_对流求和, T_对流求和_i)
-        delta_t_温差 = T_对流求和 / T_对流求和_i - 293
+        T=result.reshape(N_x_grid,N_x_grid)
+
 
         #数据写入文件(eff_1, eff_2,h,N_x_grid,N_y_grid,k,X,Y,T,a_p,a_n,a_s,a_w,a_e,sp, su)
-        print('已完成:{:.2f}%  t_温差:{:.3f}'.format(k / cal_num * 100, delta_t_温差))
+        print('已完成:{:.2f}% '.format(k / cal_num * 100))
     #打开tecplot(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2)  # 最后调用
 
 
@@ -233,5 +225,6 @@ endtime = datetime.datetime.now()
 print((endtime - starttime).seconds)
 '''
 t=5  35s
-
+25
+24                                                                                                                                                                                                
 '''
