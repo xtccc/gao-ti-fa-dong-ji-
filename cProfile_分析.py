@@ -7,12 +7,40 @@
 """
 
 import cProfile
-import gaoti_tanli
+import gaoti
 
-cProfile.run('gaoti_tanli.solve(20,20,5,0.6949,0.7515)')
+import  numpy as np
+N_x_grid=100*100
+N_y_grid=100*100
+T = np.zeros((N_x_grid,N_y_grid))
+
+result= np.zeros(N_x_grid*N_y_grid)
+for i in range(N_x_grid*N_y_grid):
+        result[i] = N_x_grid**5+12354
+def aa(N_x_grid,N_y_grid,result):
+    for i in range (0, N_x_grid):
+        for j in range (0, N_y_grid):
+            T[i][j] = result[i * N_y_grid + j]
+    return T
+
+
+
+cProfile.run('T = result.reshape (N_x_grid, N_y_grid)')
+cProfile.run('T = aa(N_x_grid,N_y_grid,result)')
+
+
 '''
-从分析报告结果中我们可以得到很多信息：
-
-    整个过程一共有197个函数调用被监控，其中192个是原生调用（即不涉及递归调用）总共执行的时间为0.002秒结果列表中是按照标准名称进行排序，也就是按照字符串的打印方式（数字也当作字符串）在列表中：
-        ncalls表示函数调用的次数（有两个数值表示有递归调用，总调用次数/原生调用次数）tottime是函数内部调用时间（不包括他自己调用的其他函数的时间）percall等于 tottime/ncallscumtime累积调用时间，与tottime相反，它包含了自己内部调用函数的时间最后一列，文件名，行号，函数名
+   Ordered by: standard name
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.011    0.011    0.011    0.011 <string>:1(<module>)
+        1    0.001    0.001    0.012    0.012 {built-in method builtins.exec}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'reshape' of 'numpy.ndarray' objects}
+         4 function calls in 69.435 seconds
+   Ordered by: standard name
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000   69.435   69.435 <string>:1(<module>)
+        1   69.435   69.435   69.435   69.435 cProfile_分析.py:20(aa)
+        1    0.000    0.000   69.435   69.435 {built-in method builtins.exec}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
 '''

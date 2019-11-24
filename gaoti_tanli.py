@@ -1,7 +1,7 @@
 # 二维非稳态导热问题的有限体积数值解法#
 from scipy import linalg
 import os
-# 定义求解函数，形参为网格数目,求解时间,eff1,eff2
+
 def solve(N_x_grid, N_y_grid ,t,eff1,eff2):
 	# 物性参数：发动机长度，高温辐射区域长度，两层材料的宽度、热传导系数、密度、比热容，燃气温度，初始温度,玻尔兹曼常数
 	L = 0.05
