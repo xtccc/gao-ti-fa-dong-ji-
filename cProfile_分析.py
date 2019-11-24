@@ -7,9 +7,9 @@
 """
 
 import cProfile
-import gaoti
+import gaoti_tanli
 
-cProfile.run('gaoti.solve(20, 20, 5, 0.8, 0.3, 0.3)')
+cProfile.run('gaoti_tanli.solve(20,20,5,0.6949,0.7515)')
 '''
 从分析报告结果中我们可以得到很多信息：
 
