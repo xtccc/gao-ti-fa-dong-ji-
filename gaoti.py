@@ -2,7 +2,7 @@
 # -*- coding:utf-8 _*-
 """
 @author:tianchang
-@file: 膏体14-10.py
+@file: gaoti.py
 @time: 2019/11/16 14:10-20s
 """
 # 添加中断后继续的代码部分
@@ -11,8 +11,7 @@ import numpy as np
 # 定义求解函数，形参为网格数目
 import os
 import datetime
-print('start--py')
-starttime = datetime.datetime.now()
+
 
 
 def 打开tecplot(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2):
@@ -67,8 +66,8 @@ def 数据写入文件(
                         sp[i][j],
                         su[i][j]))
 
-
-def solve(N_x_grid, N_y_grid, t, eff_1, eff_2, h):
+#20, 20, 5, 0.8, 0.3, 0.3
+def solve(N_x_grid=20, N_y_grid=20, t=5, eff_1=0.8, eff_2=0.3, h=0.3):
     '''N_x_grid, N_y_grid, t, eff, h'''
     # 物性参数定义：发动机长度，高温辐射区域长度，两层材料的宽度、热传导系数、密度、比热容，燃气温度，发射率，对流换热系数
     L = 0.05
@@ -212,17 +211,16 @@ def solve(N_x_grid, N_y_grid, t, eff_1, eff_2, h):
 
 
         #数据写入文件(eff_1, eff_2,h,N_x_grid,N_y_grid,k,X,Y,T,a_p,a_n,a_s,a_w,a_e,sp, su)
-        print('已完成:{:.2f}% '.format(k / cal_num * 100))
+        #print('已完成:{:.2f}% '.format(k / cal_num * 100))
     #打开tecplot(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2)  # 最后调用
 
+if __name__ == '__main__':
 
 # return (X, Y, T)'''
 # 调用函数的主程序
-solve(20, 20, 5, 0.8, 0.3, 0.3)
+    solve(20, 20, 5, 0.8, 0.3, 0.3)
 
-endtime = datetime.datetime.now()
 
-print((endtime - starttime).seconds)
 '''
 t=5  35s
 25
