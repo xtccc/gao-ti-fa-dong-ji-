@@ -21,6 +21,12 @@ def 打开tecplot(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2):
     args = 'cd "内流场大作业代码上边界对流eff_1={3} eff_2={5} h={4}"&&"T-2d-Nx={0}-Ny={1}-t={2}.plt"'.format(
         N_x_grid, N_y_grid, (int(30 / delta_t)) * 0.004, eff_1, h, eff_2)
     os.popen(args)
+def 打开tecplot_linux(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2):
+    cwd = os.getcwd()
+    args = '/usr/local/tecplot360ex/bin/tec360 ' +cwd+'/'+'\'内流场大作业代码上边界对流eff_1={} eff_2={} h={}\''.format(eff_1,eff_2,h)+'/'+'T-2d-Nx={}-Ny={}-t={}.plt'.format(N_x_grid, N_y_grid, (int(5 / delta_t)) * 0.004)
+    os.popen(args)
+    args = '/usr/local/tecplot360ex/bin/tec360 ' +cwd+'/'+'\'内流场大作业代码上边界对流eff_1={} eff_2={} h={}\''.format(eff_1,eff_2,h)+'/'+'T-2d-Nx={}-Ny={}-t={}.plt'.format(N_x_grid, N_y_grid, (int(30 / delta_t)) * 0.004)
+    os.popen(args)
 
 
 def 数据写入文件(
@@ -210,15 +216,16 @@ def solve(N_x_grid=20, N_y_grid=20, t=5, eff_1=0.8, eff_2=0.3, h=0.3):
         T=result.reshape(N_x_grid,N_x_grid)
 
 
-        #数据写入文件(eff_1, eff_2,h,N_x_grid,N_y_grid,k,X,Y,T,a_p,a_n,a_s,a_w,a_e,sp, su)
-        #print('已完成:{:.2f}% '.format(k / cal_num * 100))
+        数据写入文件(eff_1, eff_2,h,N_x_grid,N_y_grid,k,X,Y,T,a_p,a_n,a_s,a_w,a_e,sp, su)
+        print('已完成:{:.2f}% '.format(k / cal_num * 100))
     #打开tecplot(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2)  # 最后调用
+    打开tecplot_linux(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2)
 
 if __name__ == '__main__':
 
 # return (X, Y, T)'''
 # 调用函数的主程序
-    solve(20, 20, 5, 0.8, 0.3, 0.3)
+    solve(20, 20, 30, 0.8, 0.3, 0.3)
 
 
 '''
