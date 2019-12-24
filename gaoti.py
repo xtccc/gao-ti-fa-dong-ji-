@@ -23,9 +23,10 @@ def 打开tecplot(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2):
     os.popen(args)
 def 打开tecplot_linux(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2):
     cwd = os.getcwd()
-    args = '/usr/local/tecplot360ex/bin/tec360 ' +cwd+'/'+'\'内流场大作业代码上边界对流eff_1={} eff_2={} h={}\''.format(eff_1,eff_2,h)+'/'+'T-2d-Nx={}-Ny={}-t={}.plt'.format(N_x_grid, N_y_grid, (int(5 / delta_t)) * 0.004)
+    args = '/usr/local/tecplot360ex/bin/tec360 ' +cwd+'/'+'\'{3}*{4}内流场大作业代码上边界对流eff_1={0} eff_2={1} h={2}\''.format(eff_1,eff_2,h,N_x_grid,N_y_grid)+'/'+'T-2d-Nx={0}-Ny={1}-t={2}.plt'.format(N_x_grid, N_y_grid, (int(5 / delta_t)) * delta_t)
+    print(args)
     os.popen(args)
-    args = '/usr/local/tecplot360ex/bin/tec360 ' +cwd+'/'+'\'内流场大作业代码上边界对流eff_1={} eff_2={} h={}\''.format(eff_1,eff_2,h)+'/'+'T-2d-Nx={}-Ny={}-t={}.plt'.format(N_x_grid, N_y_grid, (int(30 / delta_t)) * 0.004)
+    args = '/usr/local/tecplot360ex/bin/tec360 ' +cwd+'/'+'\'{3}*{4}内流场大作业代码上边界对流eff_1={0} eff_2={1} h={2}\''.format(eff_1,eff_2,h,N_x_grid,N_y_grid)+'/'+'T-2d-Nx={}-Ny={}-t={}.plt'.format(N_x_grid, N_y_grid, (int(30 / delta_t)) * delta_t)
     os.popen(args)
 
 
@@ -45,15 +46,15 @@ def 数据写入文件(
         a_w,
         a_e,
         sp,
-        su):
+        su,delta_t):
     '''# 判断是否存在文件夹，不存在则建立'''
     if not os.path.exists(
-            r'./内流场大作业代码上边界对流eff_1={0} eff_2={2} h={1}'.format(eff_1, h, eff_2)):
+            r'./{3}*{4}内流场大作业代码上边界对流eff_1={0} eff_2={2} h={1}'.format(eff_1, h, eff_2,N_x_grid,N_y_grid)):
         os.mkdir(
-            r'./内流场大作业代码上边界对流eff_1={0} eff_2={2} h={1}'.format(eff_1, h, eff_2))
+            r'./{3}*{4}内流场大作业代码上边界对流eff_1={0} eff_2={2} h={1}'.format(eff_1, h, eff_2,N_x_grid,N_y_grid))
     with open(
-            r'./内流场大作业代码上边界对流eff_1={3} eff_2={5} h={4}/T-2d-Nx={0}-Ny={1}-t={2}.plt'.format(
-                N_x_grid, N_y_grid, (k + 1) * 0.004, eff_1, h, eff_2), 'w', encoding='UTF-8') as fp1:
+            r'./{0}*{1}内流场大作业代码上边界对流eff_1={3} eff_2={5} h={4}/T-2d-Nx={0}-Ny={1}-t={2}.plt'.format(
+                N_x_grid, N_y_grid, (k + 1) * delta_t, eff_1, h, eff_2), 'w', encoding='UTF-8') as fp1:
         fp1.write("VARIABLES = X, Y, T, ap,an,as,aw,ae,sp,su\n")  # 按计算节点数输出结果
         fp1.write("ZONE I=%d,J=%d, F=POINT,t=\"%.3f\"\n" %
                   (N_x_grid, N_y_grid, (k + 1) * 0.004))
@@ -73,7 +74,7 @@ def 数据写入文件(
                         su[i][j]))
 
 #20, 20, 5, 0.8, 0.3, 0.3
-def solve(N_x_grid=20, N_y_grid=20, t=5, eff_1=0.8, eff_2=0.3, h=0.3):
+def solve(N_x_grid=20, N_y_grid=20, t=5, eff_1=0.8, eff_2=0.3, h=0.3,delta_t=0.004):
     '''N_x_grid, N_y_grid, t, eff, h'''
     # 物性参数定义：发动机长度，高温辐射区域长度，两层材料的宽度、热传导系数、密度、比热容，燃气温度，发射率，对流换热系数
     L = 0.05
@@ -97,7 +98,7 @@ def solve(N_x_grid=20, N_y_grid=20, t=5, eff_1=0.8, eff_2=0.3, h=0.3):
     delta_x = L / N_x_grid  # 0.0025
     delta_y = (2 * HH + hh) / N_y_grid  # 0.0005
     # 时间步长及迭代次数：
-    delta_t = 0.004
+
     cal_num = int(t / delta_t)
     # 定义求解线性方程组的动态数组：
     AA = np.zeros((N_x_grid * N_y_grid, N_x_grid * N_y_grid))
@@ -215,17 +216,18 @@ def solve(N_x_grid=20, N_y_grid=20, t=5, eff_1=0.8, eff_2=0.3, h=0.3):
         result = np.linalg.solve(AA, CC)  # 求解温度场
         T=result.reshape(N_x_grid,N_x_grid)
 
-
-        数据写入文件(eff_1, eff_2,h,N_x_grid,N_y_grid,k,X,Y,T,a_p,a_n,a_s,a_w,a_e,sp, su)
-        print('已完成:{:.2f}% '.format(k / cal_num * 100))
+        if (k + 1) * delta_t % 5 == 0:
+            数据写入文件(eff_1, eff_2,h,N_x_grid,N_y_grid,k,X,Y,T,a_p,a_n,a_s,a_w,a_e,sp, su,delta_t)
+        if k%20==0:
+            print('已完成:{:.2f}% '.format(k / cal_num * 100))
     #打开tecplot(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2)  # 最后调用
-    打开tecplot_linux(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2)
+    #打开tecplot_linux(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2)
 
 if __name__ == '__main__':
-
-# return (X, Y, T)'''
 # 调用函数的主程序
-    solve(20, 20, 30, 0.8, 0.3, 0.3)
+    N_x_grid=20; N_y_grid=20; t=30; eff_1=0.8; eff_2=0.3; h=0.3;delta_t=0.002
+    solve(N_x_grid, N_y_grid, t, eff_1, eff_2,h,delta_t)
+    打开tecplot_linux(N_x_grid, N_y_grid, delta_t, eff_1, h, eff_2)
 
 
 '''

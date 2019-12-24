@@ -1,8 +1,8 @@
 # 二维非稳态导热问题的有限体积数值解法#
-from scipy import linalg
-import os
+#from scipy import linalg
+#import os
 
-def solve(N_x_grid, N_y_grid ,t,eff1,eff2):
+def solve(N_x_grid, N_y_grid ,t,eff1,eff2,delta_t):
 	# 物性参数：发动机长度，高温辐射区域长度，两层材料的宽度、热传导系数、密度、比热容，燃气温度，初始温度,玻尔兹曼常数
 	L = 0.05
 	L1 = 0.02
@@ -25,7 +25,7 @@ def solve(N_x_grid, N_y_grid ,t,eff1,eff2):
 	delta_y = (2 * HH + hh) / N_y_grid  # 20个网格为0.0005
 	
 	# 时间步长及迭代次数：
-	delta_t = 0.002#0.004*(20/N_x_grid)*(20/N_y_grid)
+	#delta_t = 0.002#0.004*(20/N_x_grid)*(20/N_y_grid)
 	cal_num = int(t / delta_t)
 	
 	# 系数
@@ -37,7 +37,7 @@ def solve(N_x_grid, N_y_grid ,t,eff1,eff2):
 	ap1 = rou1 * Cp1 * delta_x * delta_y / delta_t
 	ap2 = rou2 * Cp1 * delta_x * delta_y / delta_t
 	qgas=eff1 * sigma * Tgas**4
-	h=10
+	#h=10
 	qcon=h*Tair
 	
 	# 定义求解线性方程组AA*T=CC的动态数组AA、CC：
@@ -159,39 +159,26 @@ def solve(N_x_grid, N_y_grid ,t,eff1,eff2):
 						CC[i * N_y_grid + j] = CC[i * N_y_grid + j] + a_e[i][j] * T[i + 1][j]
 			
 			#调用scipy库求解线性方程组
-			result=np.linalg.solve(AA, CC)
-			for i in range(0, N_x_grid):
-				for j in range(0, N_y_grid):
-					if result[i * N_y_grid + j]>293:
-						T[i][j] = result[i * N_y_grid + j]
-			# if k*delta_t==5 or k*delta_t==29.96:
-			# 	for i in range(0,N_x_grid):
-			# 		print((T[i][9]+T[i][10])/2)
-				
+			# result=np.linalg.solve(AA, CC)
+			# for i in range(0, N_x_grid):
+			# 	for j in range(0, N_y_grid):
+			# 		if result[i * N_y_grid + j]>293:
+			# 			T[i][j] = result[i * N_y_grid + j]
+			result = np.linalg.solve(AA, CC)  # 求解温度场
+			T = result.reshape(N_x_grid, N_x_grid)
 
-#####################################################################
-	#建立文件夹及写入温度计算数据，导入tecplot进行后处理
-		# 判断是否存在文件夹，不存在则建立
-
-	# if not os.path.exists('G:\\python project\\python project1\\内流场大作业代码上边界对流eff={0}-{1}-n_x={2}-n_y={3}' .format(eff1,eff2,N_x_grid,N_y_grid)):
-	# 	os.mkdir('G:\\python project\\python project1\\内流场大作业代码上边界对流eff={0}-{1}-n_x={2}-n_y={3}'.format(eff1,eff2,N_x_grid,N_y_grid))
-	#
-	# if k%(0.02/delta_t)==0 or k==cal_num  :#每隔0.02秒输出一个plt文件，避免文件太多导入tecplot太慢
-	# 	with open('G:\\python project\\python project1\\内流场大作业代码上边界对流eff={3}-{4}-n_x={5}-n_y={6}\\T-2d-Nx={0}-Ny={1}-t={2}.plt'.format(N_x_grid, N_y_grid, k  * delta_t,eff1,eff2,N_x_grid, N_y_grid), 'w', encoding='UTF-8') as fp1:
-	# 		fp1.write("VARIABLES = X, Y, T, ap,an,as,aw,ae,sp,su\n")  # 按计算节点数输出结果
-	# 		fp1.write("ZONE I=%d,J=%d, F=POINT,t=\"%.3f\"\n" % (N_x_grid, N_y_grid,k*delta_t))
-	# 		for j in range(N_y_grid - 1, -1, -1):
-	# 			for i in range(0, N_x_grid):
-	# 				fp1.write(
-	# 					"%6.5Lf   %6.5Lf   %6.3Lf   %6.3Lf   %6.3Lf   %6.3Lf   %6.3Lf   %6.3Lf   %6.3Lf   %6.3Lf\n" % (
-	# 						X[i][j], Y[i][j], T[i][j], a_p[i][j], a_n[i][j], a_s[i][j], a_w[i][j],
-	# 						a_e[i][j], sp[i][j], su[i][j]))
-
+		#if (k + 1) * delta_t % 5 == 0:
+		数据写入文件(eff1, eff2, h, N_x_grid, N_y_grid, k, X, Y, T, a_p, a_n, a_s, a_w, a_e, sp, su,delta_t)
+		if k % 20 == 0:
+			print('已完成:{:.2f}% '.format(k / cal_num * 100))
 
 # 调用函数的主程序
 import numpy as np
+from gaoti import 数据写入文件,打开tecplot_linux
 #N_x_grid,N_y_grid,t,eff1,eff2=input("请输入x方向网格数量，y方向网格数量，计算时间，材料1辐射率，材料2辐射率").split()
 #solve(int(N_x_grid),int(N_y_grid),int(t),float(eff1),float(eff2))#N_xgrid=20,N_ygrid=20,t=50,eff1=0.6949,eff2=0.7515
 if __name__== '__main__':
-	solve (20, 20, 30, 0.6949, 0.7515)  # N_xgrid=20,N_ygrid=20,t=50,eff1=0.6949,eff2=0.7515
-
+	N_xgrid = 20;N_ygrid = 20;t = 30;eff1 = 0.8;eff2 = 0.3;h = 0.3;delta_t = 0.004
+	#N_xgrid = 20;N_ygrid = 20; t = 30; eff1 = 0.6949; eff2 = 0.7515;h=10;delta_t=0.002
+	solve (N_xgrid, N_ygrid, t, eff1, eff2,delta_t)  #
+	打开tecplot_linux(N_xgrid, N_ygrid, delta_t, eff1, h, eff2)
